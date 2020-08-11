@@ -2,9 +2,14 @@
 
 // this brings in the Express server module
 const express = require('express');
+// Bring in connectDB from db.js in the config folder.
+const connectDB = require('./config/db');
 
 // here we initialize the Express server
 const app = express();
+
+// Connect the database brought in above
+connectDB();
 
 // the '/' references the home page and the get method takes in a request and a response object. The response can be many things such as a string, json, html, etc.
 // app.get('/', (req, res) => res.send('Hello World'));
