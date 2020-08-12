@@ -11,6 +11,10 @@ const app = express();
 // Connect the database brought in above
 connectDB();
 
+// Initialize Middleware. 
+// This middleware allows you to see the body of http requests sent on the backend
+app.use(express.json({ extended: false }));
+
 // the '/' references the home page and the get method takes in a request and a response object. The response can be many things such as a string, json, html, etc.
 // app.get('/', (req, res) => res.send('Hello World'));
 app.get('/', (req, res) => res.json({ msg: 'Welcome to the ContactKeeper API...'}))
