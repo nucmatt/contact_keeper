@@ -1,6 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
+// Bring in JSON web token for protecting routes
+const jwt = require('jsonwebtoken');
+// Bring in the secret for the JWT from the config file default.json
+const config = require('config');
 // Bring in express validator for error checking of the post requests received
 const { check, validationResult } = require('express-validator');
 
@@ -58,7 +62,28 @@ router.post(
 
 			await user.save();
 
-			res.send('User saved');
+			// This was a place holder just to give feedback that a user was registered. Now that is verified so we move on to create the web token and protect the route.
+			// res.send('User saved');
+
+			// Here we a creating the payload for the JWT. We will use a user id to identify the user to the server database and retrieve that user's contacts.
+			const payload = {
+				user: {
+					id: user.id,
+				},
+			};
+
+			// Creating the JWT for protecting the route by creating a unique id for the user when they log in. The sign method takes in the payload of data, the secret for generating the protection, a options object, a callback
+			jwt.sign(
+				payload,
+				config.get('jwtSecret'),
+				{
+					expiresIn: 360000,
+				},
+				(err, token) => {
+					if (err) throw err;
+					res.json({ token });
+				}
+			);
 		} catch (err) {
 			console.error(err.message);
 			res.status(500).send('Server error');
