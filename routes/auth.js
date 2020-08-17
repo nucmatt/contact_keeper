@@ -5,6 +5,8 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 // Bring in the secret for the JWT from the config file default.json
 const config = require('config');
+// Bring in the authentication middleware we created to handle protected routes
+const auth = require('../middleware/auth');
 // Bring in express validator for error checking of the post requests received
 const { check, validationResult } = require('express-validator');
 
@@ -13,8 +15,16 @@ const User = require('../models/User');
 // @route       GET api/auth
 // @desc        Get logged in user
 // @access      Private
-router.get('/', (req, res) => {
-	res.send('Get logged in user');
+router.get('/', auth, async (req, res) => {
+    // res.send('Get logged in user');
+    try {
+        // findById is a mongoose method. The select method allows you to remove some data from the response. Here we are removing the user's password. Remember that in the middleware we assigned the user data int the JWT to req.user. Tha gives us access to req.user.id below. All of this data, user/password/etc is within the payload of the JWT.
+        const user = await (await User.findById(req.user.id).select('-password'));
+        res.json(user);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
 });
 
 // note that you can send both of these routes to the same endpoint since they are using different HTTP methods.
