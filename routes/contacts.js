@@ -66,15 +66,70 @@ router.post(
 // @route       PUT api/contacts/:id
 // @desc        Update contact
 // @access      Private
-router.put('/:id', (req, res) => {
-	res.send('Update contact');
+router.put('/:id', auth, async (req, res) => {
+	// res.send('Update contact');
+	const { name, email, phone, type } = req.body;
+
+	// Build contact object from fields submitted
+	const contactFields = {};
+	if (name) contactFields.name = name;
+	if (email) contactFields.email = email;
+	if (phone) contactFields.phone = phone;
+	if (type) contactFields.type = type;
+
+	try {
+		// The findById method takes in an id. Here we access the request parameter id from the put update path.
+		let contact = await Contact.findById(req.params.id);
+
+		// Remember status 404 is not found.
+		if (!contact) return res.status(404).json({ msg: 'Contact not found' });
+
+		// Make sure user owns the contact to be updated by comparing their logged in id to the contact's user data type.
+		if (contact.user.toString() !== req.user.id) {
+			return res.status(401).json({ msg: 'Not authorized' });
+		}
+
+		// Now you can update the contact after verification of above. Not sure which technology uses the $set. Not explained in video.
+		contact = await Contact.findByIdAndUpdate(
+			req.params.id,
+			{ $set: contactFields },
+			{ new: true }
+		);
+
+		// Response includes the updated contact to update the user's contacts in the UI.
+		res.json(contact);
+	} catch (err) {
+		console.error(err.message);
+		res.status(500).send('Server Error');
+	}
 });
 
 // @route       DELETE api/contacts/:id
 // @desc        delete contact
 // @access      Private
-router.delete('/:id', (req, res) => {
-	res.send('Delete contact');
+router.delete('/:id', auth, async (req, res) => {
+    // res.send('Delete contact');
+    try {
+		// The findById method takes in an id. Here we access the request parameter id from the put update path.
+		let contact = await Contact.findById(req.params.id);
+
+		// Remember status 404 is not found.
+		if (!contact) return res.status(404).json({ msg: 'Contact not found' });
+
+		// Make sure user owns the contact to be deleted by comparing their logged in id to the contact's user data type.
+		if (contact.user.toString() !== req.user.id) {
+			return res.status(401).json({ msg: 'Not authorized' });
+		}
+
+		// Now you can delete the contact after verification of above.
+		await Contact.findByIdAndRemove(req.params.id);
+
+		// Response includes the deleted contact to update the user's contacts in the UI.
+		res.json({ msg: 'Contact removed' });
+	} catch (err) {
+		console.error(err.message);
+		res.status(500).send('Server Error');
+	}
 });
 
 // The router MUST be exported for any routes to work.
