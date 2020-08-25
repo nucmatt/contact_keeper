@@ -1,7 +1,7 @@
 import React, { useReducer } from 'react';
 import uuid from 'uuid';
 import ContactContext from './contactContext';
-import contactReducer from ' ./contactReducer';
+import contactReducer from './contactReducer';
 import {
 	ADD_CONTACT,
 	DELETE_CONTACT,
@@ -56,9 +56,9 @@ const ContactState = (props) => {
 
 	// Clear Filter
 
-    // In the return statement below, props.children will become any component that is rendered within the <ContactState> component. This makes it so that all those children will have access to the state of the ContactState component since it is a Context API Provider. In other words, the child components subscribe to the ContactState component's state and will update/rerender themselves whenever ContactState has it's state updated.
+	// In the return statement below, props.children will become any component that is rendered within the <ContactState> component. This makes it so that all those children will have access to the state of the ContactState component since it is a Context API Provider. In other words, the child components subscribe to the ContactState component's state and will update/rerender themselves whenever ContactState has it's state updated.
 	return (
-		<ContactContext.Provider value={{ contact: state.contacts }}>         
+		<ContactContext.Provider value={{ contacts: state.contacts }}>
 			{props.children}
 		</ContactContext.Provider>
 	);

@@ -1,3 +1,5 @@
+// types are just variables we will use to decide what to do in the reducer.
+
 export const ADD_CONTACT = 'ADD_CONTACT';
 export const DELETE_CONTACT = 'DELETE_CONTACT';
 export const SET_CURRENT = 'SET_CURRENT';
