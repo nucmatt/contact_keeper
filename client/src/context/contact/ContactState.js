@@ -1,5 +1,5 @@
 import React, { useReducer } from 'react';
-import uuid from 'uuid';
+import { v4 as uuidv4 } from 'uuid';
 import ContactContext from './contactContext';
 import contactReducer from './contactReducer';
 import {
@@ -40,9 +40,17 @@ const ContactState = (props) => {
 		],
 	};
 
-	const [state, dispatch] = useReducer(contactReducer, initialState);
-
+    const [state, dispatch] = useReducer(contactReducer, initialState);
+    
+    // state update methods
+    // Note that each of these methods needs to be added to the returned providers value attribute below. The value attribute is what gives each child component access of the Provider access to the Provider's methods.
 	// Add Contact
+	const addContact = (contact) => {
+		// using uuid here to generate a random key value for use in updating the UI. Once the UI is connected to the database, JWT will assign the contact a random id.
+		contact.id = uuidv4();
+		// Remember the dispatch method makes a call the the reducer WITH a payload attached so the reducer can perform the correct action to update the app's state.
+		dispatch({ type: ADD_CONTACT, payload: contact });
+	};
 
 	// Delete Contact
 
@@ -58,7 +66,7 @@ const ContactState = (props) => {
 
 	// In the return statement below, props.children will become any component that is rendered within the <ContactState> component. This makes it so that all those children will have access to the state of the ContactState component since it is a Context API Provider. In other words, the child components subscribe to the ContactState component's state and will update/rerender themselves whenever ContactState has it's state updated.
 	return (
-		<ContactContext.Provider value={{ contacts: state.contacts }}>
+		<ContactContext.Provider value={{ contacts: state.contacts, addContact }}>
 			{props.children}
 		</ContactContext.Provider>
 	);
