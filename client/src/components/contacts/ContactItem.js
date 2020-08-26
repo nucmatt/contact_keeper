@@ -3,16 +3,18 @@ import PropTypes from 'prop-types';
 import ContactContext from '../../context/contact/contactContext';
 
 export const ContactItem = ({ contact }) => {
-    const contactContext = useContext(ContactContext);
-    const { deleteContact } = contactContext;
+	const contactContext = useContext(ContactContext);
+	const { deleteContact, setCurrent, clearCurrent } = contactContext;
 
 	// destructuring the contact object passed in as a prop
-    const { id, name, email, phone, type } = contact;
-    
-    const onDelete = () => {
-        // Remember you have access to the contact's id property from the above property (destructured above).
+	const { id, name, email, phone, type } = contact;
+
+	const onDelete = () => {
+		// Remember you have access to the contact's id property from the above property (destructured above).
         deleteContact(id);
-    }
+        // One a delete action we also want to set the current state back to null so we call clearCurrent.
+        clearCurrent();
+	};
 	return (
 		<div className='card bg-light'>
 			<h3 className='text-primary text-left'>
@@ -42,8 +44,18 @@ export const ContactItem = ({ contact }) => {
 				)}
 			</ul>
 			<p>
-				<button className='btn btn-dark btn-sm'>Edit</button>
-				<button className='btn btn-danger btn-sm' onClick={onDelete}>Delete</button>
+				<button
+					className='btn btn-dark btn-sm'
+					onClick={() =>
+						// here we don't need a method for onClick, we can just call setCurrent directly and pass in the contact prop (from the funtional component this return statement is a part of.)
+						setCurrent(contact)
+					}
+				>
+					Edit
+				</button>
+				<button className='btn btn-danger btn-sm' onClick={onDelete}>
+					Delete
+				</button>
 			</p>
 		</div>
 	);

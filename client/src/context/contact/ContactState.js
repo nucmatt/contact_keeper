@@ -38,6 +38,8 @@ const ContactState = (props) => {
 				type: 'professional',
 			},
 		],
+		// This piece of state will hold the contact that is currently being edited in the UI.
+		current: null,
 	};
 
 	const [state, dispatch] = useReducer(contactReducer, initialState);
@@ -58,8 +60,15 @@ const ContactState = (props) => {
 	};
 
 	// Set Current Contact
+	const setCurrent = (contact) => {
+		dispatch({ type: SET_CURRENT, payload: contact });
+	};
 
 	// Clear Current Contact
+	const clearCurrent = () => {
+		// No payload required here. This method just sets the current state back to null.
+		dispatch({ type: CLEAR_CURRENT });
+	};
 
 	// Update Contact
 
@@ -70,7 +79,14 @@ const ContactState = (props) => {
 	// In the return statement below, props.children will become any component that is rendered within the <ContactState> component. This makes it so that all those children will have access to the state of the ContactState component since it is a Context API Provider. In other words, the child components subscribe to the ContactState component's state and will update/rerender themselves whenever ContactState has it's state updated.
 	return (
 		<ContactContext.Provider
-			value={{ contacts: state.contacts, addContact, deleteContact }}
+			value={{
+				contacts: state.contacts,
+				current: state.current,
+				addContact,
+				deleteContact,
+				setCurrent,
+				clearCurrent,
+			}}
 		>
 			{props.children}
 		</ContactContext.Provider>

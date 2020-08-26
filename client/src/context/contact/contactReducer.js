@@ -15,13 +15,25 @@ export default (state, action) => {
 			return {
 				...state,
 				contacts: [...state.contacts, action.payload],
-            };
-        case DELETE_CONTACT:
-            return {
-                ...state,
-                // The filter array method will return a new array with all contacts that DO NOT match the passed in id(id is held in action.payload).
-                contacts: state.contacts.filter(contact => contact.id !== action.payload)
-            }
+			};
+		case DELETE_CONTACT:
+			return {
+				...state,
+				// The filter array method will return a new array with all contacts that DO NOT match the passed in id(id is held in action.payload).
+				contacts: state.contacts.filter(
+					(contact) => contact.id !== action.payload
+				),
+			};
+		case SET_CURRENT:
+			return {
+				...state,
+				current: action.payload,
+			};
+		case CLEAR_CURRENT:
+			return {
+				...state,
+				current: null,
+			};
 		default:
 			return state;
 	}
