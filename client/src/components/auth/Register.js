@@ -1,12 +1,24 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import AlertContext from '../../context/alert/alertContext';
+import AuthContext from '../../context/auth/authContext';
 
 const Register = () => {
-	// Bring in the alert context so we can use it's methods.
+	// Bring in the contexts used so we can access those methods.
 	const alertContext = useContext(AlertContext);
+	const authContext = useContext(AuthContext);
 
-	// pull out the methods from the alert context for use.
+	// pull out the methods you want to use from the imported contexts. You don't have to destructure them like this but Traversy does it and I think I like the look of this code.
 	const { setAlert } = alertContext;
+	const { register, error, clearErrors } = authContext;
+
+	useEffect(() => {
+		// An alternative for error checking, esp for large projects, it to assign each error type a unique(but not changing) identifier and match the identifier, not the string.
+		if (error === 'User already exists') {
+			setAlert(error, 'danger');
+			clearErrors();
+		}
+		// Remember you can add a dependency to useEffect so that it only runs when there is a change to a specific piece of state, hence the , [error] added here.
+	}, [error]);
 
 	const [user, setUser] = useState({
 		name: '',
@@ -27,7 +39,13 @@ const Register = () => {
 		} else if (password !== password2) {
 			setAlert('Passwords do not match', 'danger');
 		} else {
-			console.log('Register Submit');
+			// console.log('Register Submit');
+			// The register method is expecting form data in the form of an object so we include the user's data as an object.
+			register({
+				name,
+				email,
+				password,
+			});
 		}
 	};
 
